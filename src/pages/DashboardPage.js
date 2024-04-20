@@ -1,38 +1,40 @@
+// src/pages/DashboardPage.js
+import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from 'recharts';
+import calculateChartData from '../utils/calculateChartData';
+
 const DashboardPage = () => {
-    // Placeholder data for demonstration purposes
-    const totalBalance = 1000;
-    const recentTransactions = [
-        { id: '1', date: '2024-04-20', description: 'Groceries', amount: -50 },
-        { id: '2', date: '2024-04-19', description: 'Salary', amount: 2000 },
-        // Add more recent transactions as needed
-    ];
+  // Get transactions from Redux store (or any other state management)
+  const transactions = useSelector((state) => state.transactions);
 
-    return (
-        <div className="dashboard-page p-4">
-            <h1 className="text-2xl font-bold">Dashboard</h1>
+  // State to store chart data
+  const [chartData, setChartData] = useState([]);
 
-            {/* Display total balance */}
-            <div className="total-balance my-4">
-                <h2 className="text-xl">Total Balance: ${totalBalance}</h2>
-            </div>
+  // Calculate chart data whenever transactions change
+  useEffect(() => {
+    const data = calculateChartData(transactions);
+    setChartData(data);
+  }, [transactions]);
 
-            {/* Display recent transactions */}
-            <div className="recent-transactions my-4">
-                <h3 className="text-lg font-semibold">Recent Transactions</h3>
-                <ul>
-                    {recentTransactions.map((transaction) => (
-                        <li key={transaction.id} className="my-2">
-                            <div>{transaction.date}</div>
-                            <div>{transaction.description}</div>
-                            <div>{transaction.amount < 0 ? '-' : '+'}${Math.abs(transaction.amount)}</div>
-                        </li>
-                    ))}
-                </ul>
-            </div>
-
-            {/* Add other dashboard components as needed */}
-        </div>
-    );
+  return (
+    <div className="dashboard-page p-4">
+      <h2 className="text-2xl font-bold mb-4">Dashboard</h2>
+      
+      {/* Bar chart to visualize spending by category */}
+      <div className="chart-container">
+        <ResponsiveContainer width="100%" height={400}>
+          <BarChart data={chartData}>
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <CartesianGrid stroke="#ccc" />
+            <Bar dataKey="amount" fill="#82ca9d" />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
 };
 
 export default DashboardPage;
