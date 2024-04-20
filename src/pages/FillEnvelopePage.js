@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const FillEnvelopePage = () => {
     // Initial state for envelopes
@@ -38,6 +40,20 @@ const FillEnvelopePage = () => {
         // Recalculate the total amount filled as the sum of all available balances
         const newTotalAmountFilled = updatedEnvelopes.reduce((sum, envelope) => sum + envelope.available, 0);
         setTotalAmountFilled(newTotalAmountFilled);
+
+        // Log the change for debugging purposes
+        console.log(`Envelope ${envelopeId} updated with new amount: ${amount}`);
+    };
+
+    // Function to handle save button click event
+    const handleSave = () => {
+        // Add code here to save the envelopes data (e.g., make an API call or update state)
+        console.log('Saving envelopes data:', envelopes);
+
+        // Show a success notification using react-toastify
+        toast.success('Envelopes data saved successfully!');
+
+        // Add any additional logic after saving data
     };
 
     return (
@@ -84,9 +100,14 @@ const FillEnvelopePage = () => {
 
                 {/* Save button */}
                 <div className="flex justify-center mt-4">
-                    <button className="btn bg-blue-600 text-white px-4 py-2 rounded">Save</button>
+                    <button className="btn bg-blue-600 text-white px-4 py-2 rounded" onClick={handleSave}>
+                        Save
+                    </button>
                 </div>
             </div>
+
+            {/* Add the ToastContainer for notifications */}
+            <ToastContainer position="top-right" autoClose={3000} />
         </div>
     );
 };
