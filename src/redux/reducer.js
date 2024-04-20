@@ -1,8 +1,11 @@
 import { combineReducers } from '@reduxjs/toolkit';
+import transactionReducer from './reducers/transactionReducer';
+import envelopeReducer from './reducers/envelopeReducer';
 
-// Since you don't have any specific reducers to import yet, you can use an empty object for now
 const rootReducer = combineReducers({
-    // Add your specific reducers here when you create them
+    transactions: transactionReducer,
+    envelopes: envelopeReducer,
+    // Add other reducers here as needed
 });
 
 export default rootReducer;
