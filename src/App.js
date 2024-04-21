@@ -22,7 +22,6 @@ const App = () => {
           <Route path="/" element={<HomePage />} />
           <Route path="/add-transaction" element={<AddTransactionPage />} />
           <Route path="/fill-envelope" element={<FillEnvelopePage />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/reports" element={<ReportsPage />} />
           {/* Add more routes as needed */}
         </Routes>

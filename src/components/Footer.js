@@ -1,13 +1,11 @@
-
 import React from 'react';
 
 const Footer = () => {
-    return (
-        <footer className="footer bg-gray-800 text-white text-center py-3">
-            <p>&copy; 2024 SpendWise. All rights reserved.</p>
-            {/* Add any additional footer content here, such as links */}
-        </footer>
-    );
+  return (
+    <footer className="bg-[#3ea364] text-white p-4 text-center">
+      <p>&#169; 2024 SpendWise. All rights reserved.</p>
+    </footer>
+  );
 };
 
 export default Footer;
