@@ -4,25 +4,29 @@ import { persistReducer, persistStore } from 'redux-persist';
 import envelopeReducer from './reducers/envelopeReducer';
 import transactionReducer from './reducers/transactionReducer';
 
+// Define persist configuration
 const persistConfig = {
     key: 'root',
     storage,
-    // Configure `redux-persist` to ignore the warnings about non-serializable values
-    // if it is intentional and you are confident with your data handling.
-    blacklist: ['nonSerializableKey'], // Example to ignore specific keys
+    whitelist: ['envelopes', 'transactions'], // Specify which reducers you want to persist
 };
 
+// Wrap the reducers with persistReducer
 const persistedEnvelopeReducer = persistReducer(persistConfig, envelopeReducer);
+const persistedTransactionReducer = persistReducer(persistConfig, transactionReducer);
 
+// Configure the store
 const store = configureStore({
     reducer: {
         envelopes: persistedEnvelopeReducer,
-        transactions: transactionReducer,
+        transactions: persistedTransactionReducer,
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware({
-        serializableCheck: false, // Turn off serializable value check
+        serializableCheck: false, // Disable serializable check
     }),
 });
 
-export const persistor = persistStore(store);
-export default store;
+// Create a persistor
+const persistor = persistStore(store);
+
+export { store, persistor };

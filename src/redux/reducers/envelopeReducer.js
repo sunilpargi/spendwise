@@ -26,6 +26,14 @@ const envelopeSlice = createSlice({
         updateEnvelopes: (state, action) => {
             state.envelopes = action.payload; // Update envelopes state with the new array of envelopes
         },
+        updateEnvelopeBalance: (state, action) => {
+            const { envelopeName, expenseAmount } = action.payload;
+            const index = state.envelopes.findIndex((envelope) => envelope.name === envelopeName);
+            if (index !== -1) {
+                // Deduct the expense amount from the available balance
+                state.envelopes[index].available -= parseFloat(expenseAmount);
+            }
+        },
         resetNewEnvelopeCreatedFlag: (state) => {
             state.newEnvelopeCreated = false; // Reset the flag
         },
@@ -33,6 +41,6 @@ const envelopeSlice = createSlice({
 });
 
 // Export the actions
-export const { addEnvelope, editEnvelope, deleteEnvelope, updateEnvelopes, resetNewEnvelopeCreatedFlag } = envelopeSlice.actions;
+export const { addEnvelope, editEnvelope, deleteEnvelope, updateEnvelopes, updateEnvelopeBalance, resetNewEnvelopeCreatedFlag } = envelopeSlice.actions;
 
 export default envelopeSlice.reducer;
