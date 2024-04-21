@@ -1,8 +1,29 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { FaEnvelopeOpenText, FaUserCircle, FaSignOutAlt } from 'react-icons/fa';
+import { useAuth } from '../context/AuthContext';
 
-const Header = ({ username, onLogout }) => {
+const Header = () => {
+    const { currentUser, logout } = useAuth();
+    const navigate = useNavigate();
+    const location = useLocation(); // Get the current location
+
+    const handleLogout = async () => {
+        await logout();
+        navigate('/login'); // Redirect to login page after logging out
+    };
+
+    // Define the routes where the header should not be shown
+    const routesWithoutHeader = ['/login', '/signup'];
+
+    // Determine if the current route is in the list of routes without a header
+    const isHiddenRoute = routesWithoutHeader.includes(location.pathname);
+
+    // Only render the header if the current route is not in the list of routes without a header
+    if (isHiddenRoute) {
+        return null;
+    }
+
     return (
         <header className="bg-white text-black p-4">
             <div className="container mx-auto flex flex-col sm:flex-row justify-between items-center">
@@ -36,19 +57,21 @@ const Header = ({ username, onLogout }) => {
                 </div>
 
                 {/* User Profile and Logout */}
-                <div className="flex items-center space-x-2">
-                    <div className="flex items-center space-x-1">
-                        <FaUserCircle className="text-2xl sm:text-3xl" />
-                        <span className="hidden sm:inline ml-1">Hi, {username}</span>
+                {currentUser && (
+                    <div className="flex items-center space-x-2">
+                        <div className="flex items-center space-x-1">
+                            <FaUserCircle className="text-2xl sm:text-3xl" />
+                            <span className="hidden sm:inline ml-1">Hi, {currentUser ? currentUser.email : ''}</span>
+                        </div>
+                        <button
+                            onClick={handleLogout}
+                            className="flex items-center space-x-1 text-sm sm:text-base"
+                        >
+                            <FaSignOutAlt />
+                            <span>Logout</span>
+                        </button>
                     </div>
-                    <button
-                        onClick={onLogout}
-                        className="flex items-center space-x-1 text-sm sm:text-base"
-                    >
-                        <FaSignOutAlt />
-                        <span>Logout</span>
-                    </button>
-                </div>
+                )}
             </div>
         </header>
     );
