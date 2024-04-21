@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useTheme } from '../context/ThemeContext';
@@ -8,21 +9,25 @@ import { editEnvelope, updateEnvelopes } from '../redux/reducers/envelopeReducer
 const FillEnvelopePage = () => {
     const { isDarkMode } = useTheme();
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
-    // Initial state for envelopes
-    const [envelopes, setEnvelopes] = useState([
-        { id: 1, name: 'Groceries', budget: 500, available: 0 },
-        { id: 2, name: 'Rent', budget: 1000, available: 0 },
-        { id: 3, name: 'Entertainment', budget: 200, available: 0 },
-        // Add more envelopes as needed
-    ]);
+    // Retrieve envelopes from Redux state
+    const envelopesFromRedux = useSelector((state) => state.envelopes.envelopes || []);
+
+    // Initial state for envelopes (local copy)
+    const [envelopes, setEnvelopes] = useState(envelopesFromRedux);
 
     // State to track the sum of all available balances
     const [totalAmountFilled, setTotalAmountFilled] = useState(0);
 
+    // Calculate the total amount filled as the sum of all available balances
+    const calculateTotalAmountFilled = () => {
+        const totalFilled = envelopes.reduce((sum, envelope) => sum + (parseFloat(envelope.available) || 0), 0);
+        setTotalAmountFilled(totalFilled);
+    };
+
     // Function to handle amount change
     const handleAmountChange = (value, envelopeId) => {
-        // Convert the value to a number
         const amount = parseFloat(value);
 
         // Validate the input to ensure it's a positive number
@@ -33,24 +38,17 @@ const FillEnvelopePage = () => {
         // Update the available balance of the selected envelope
         const updatedEnvelopes = envelopes.map((envelope) => {
             if (envelope.id === envelopeId) {
-                return {
-                    ...envelope,
-                    available: amount,
-                };
+                return { ...envelope, available: amount };
             }
             return envelope;
         });
 
         setEnvelopes(updatedEnvelopes);
-        console.log(`Updated envelopes in FillEnvelopePage:`, updatedEnvelopes);
+        calculateTotalAmountFilled();
 
         // Dispatch the updated envelope data to the Redux state
         const updatedEnvelope = updatedEnvelopes.find((envelope) => envelope.id === envelopeId);
         dispatch(editEnvelope({ id: envelopeId, updatedData: updatedEnvelope }));
-
-        // Recalculate the total amount filled as the sum of all available balances
-        const newTotalAmountFilled = updatedEnvelopes.reduce((sum, envelope) => sum + envelope.available, 0);
-        setTotalAmountFilled(newTotalAmountFilled);
 
         console.log(`Envelope ${envelopeId} updated with new amount: ${amount}`);
     };
@@ -61,38 +59,57 @@ const FillEnvelopePage = () => {
         dispatch(updateEnvelopes(envelopes));
 
         console.log('Saving envelopes data:', envelopes);
-        toast.success('Envelopes data saved successfully!');
+
+        // Show a toaster notification
+        const toastId = toast.success('Envelopes data saved successfully!');
+
+        // After the toaster disappears, redirect to homepage
+        toast.onChange((state) => {
+            if (state.id === toastId && state.status === 'hidden') {
+                navigate('/');
+            }
+        });
     };
 
     return (
-        <div className={`fill-envelope-page ${isDarkMode ? 'dark' : ''} flex flex-col items-center justify-center min-h-screen`}>
+        <div
+            className={`fill-envelope-page ${isDarkMode ? 'dark' : ''} flex flex-col items-center justify-center min-h-screen`}
+            style={{ backgroundColor: 'rgb(239,250,255)' }}
+        >
             <div className="form-wrapper bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
                 <h1 className="text-2xl font-bold mb-4 text-center">Fill Envelope</h1>
-                {envelopes.map((envelope) => (
-                    <div key={envelope.id} className="mb-4">
-                        <div className="flex justify-between mb-2">
-                            <div className="font-semibold">{envelope.name}</div>
-                            <div>{`${envelope.available.toFixed(2)}/${envelope.budget.toFixed(2)}`}</div>
+                {/* Container for envelope entries with vertical scrolling */}
+                <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                    {envelopes.map((envelope) => (
+                        <div key={envelope.id} className="mb-4">
+                            <div className="flex justify-between mb-2">
+                                <div className="font-semibold">{envelope.name}</div>
+                                {/* Convert envelope.available and envelope.budget to numbers and use toFixed */}
+                                <div>{`${parseFloat(envelope.available || 0).toFixed(2)} / ${parseFloat(envelope.budget || 0).toFixed(2)}`}</div>
+                            </div>
+                            {/* Green bar */}
+                            <div className="relative h-2 bg-gray-300 mt-2">
+                                <div
+                                    className="absolute h-2 bg-green-500"
+                                    style={{
+                                        width: `${Math.min((parseFloat(envelope.available || 0) / parseFloat(envelope.budget || 0)) * 100, 100)}%`,
+                                    }}
+                                />
+                            </div>
+                            {/* Amount input field */}
+                            <div className="mt-2 flex space-x-2">
+                                <input
+                                    type="number"
+                                    min="0"
+                                    placeholder="0.00"
+                                    value={parseFloat(envelope.available) || ''}
+                                    onChange={(e) => handleAmountChange(e.target.value, envelope.id)}
+                                    className="border p-1 w-20 rounded-lg"
+                                />
+                            </div>
                         </div>
-                        <div className="relative h-2 bg-gray-300 mt-2">
-                            <div
-                                className="absolute h-2 bg-green-500"
-                                style={{
-                                    width: `${Math.min((envelope.available / envelope.budget) * 100, 100)}%`,
-                                }}
-                            />
-                        </div>
-                        <div className="mt-2 flex space-x-2">
-                            <input
-                                type="number"
-                                min="0"
-                                placeholder="0.00"
-                                onChange={(e) => handleAmountChange(e.target.value, envelope.id)}
-                                className="border p-1 w-20 rounded-lg"
-                            />
-                        </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
                 <div className="mt-4 text-center">
                     <strong>Total Amount Filled:</strong> {totalAmountFilled.toFixed(2)}
                 </div>

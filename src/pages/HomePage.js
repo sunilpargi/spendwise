@@ -1,24 +1,35 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { deleteTransaction } from '../redux/reducers/transactionReducer';
-import { FaTrashAlt } from 'react-icons/fa'; // Import an icon for the delete action
-import { formatNumber } from '../utils/formatNumber'; // Import a utility function to format numbers
+import { FaTrashAlt } from 'react-icons/fa';
+import { toast, ToastContainer } from 'react-toastify';
+import { formatNumber } from '../utils/formatNumber';
+import { resetNewEnvelopeCreatedFlag } from '../redux/reducers/envelopeReducer';
 
 const HomePage = () => {
     // Retrieve transactions and envelopes from the Redux store
     const transactions = useSelector((state) => state.transactions.transactions || []);
     const envelopes = useSelector((state) => state.envelopes.envelopes || []);
+    const newEnvelopeCreated = useSelector((state) => state.envelopes.newEnvelopeCreated);
 
-    // Initialize useDispatch hook and useNavigate hook
+    // Initialize useDispatch and useNavigate hooks
     const dispatch = useDispatch();
     const navigate = useNavigate();
+
+    // Define and initialize state variables for `activeList` and `handleListSwitch`
+    const [activeList, setActiveList] = useState('envelopes');
+    const [selectedEnvelope, setSelectedEnvelope] = useState(null); // State to keep track of the selected envelope
+
+    const handleListSwitch = (listType) => {
+        setActiveList(listType);
+        setSelectedEnvelope(null); // Reset selected envelope when switching lists
+    };
 
     // Calculate total income, total expense, and total available balance
     let totalIncome = 0;
     let totalExpense = 0;
 
-    // Calculate totals using transactions data
     transactions.forEach((transaction) => {
         if (transaction.type === 'income') {
             totalIncome += Number(transaction.amount);
@@ -27,40 +38,42 @@ const HomePage = () => {
         }
     });
 
-    // Calculate total available balance
     const totalAvailableBalance = totalIncome - totalExpense;
 
-    // Log the envelopes state for debugging purposes
-    console.log('Envelopes state:', envelopes);
-
-    // Define function to handle delete transaction
+    // Handle the deletion of a transaction
     const handleDeleteTransaction = (transactionId) => {
-        console.log('Deleting transaction:', transactionId);
         dispatch(deleteTransaction(transactionId));
     };
 
-    // Handle navigation to the Add/Edit Envelope page
+    // Show a toaster notification if a new envelope was created and reset the flag
+    useEffect(() => {
+        if (newEnvelopeCreated) {
+            toast.success('New envelope created!');
+            dispatch(resetNewEnvelopeCreatedFlag());
+        }
+    }, [newEnvelopeCreated, dispatch]);
+
+    // Define `handleAddEditEnvelope` function to handle navigation to the Add/Edit Envelope page
     const handleAddEditEnvelope = () => {
         navigate('/envelope-management');
     };
 
-    // Function to handle the switch between envelopes and accounts
-    const [activeList, setActiveList] = React.useState('envelopes');
-    const handleListSwitch = (listType) => {
-        setActiveList(listType);
+    // Handle selecting an envelope to filter transactions
+    const handleSelectEnvelope = (envelope) => {
+        setSelectedEnvelope(envelope);
+        console.log('Selected envelope:', envelope);
     };
 
-    // Listen for changes in envelopes data
-    useEffect(() => {
-        // This effect will re-render the component when envelopes data changes
-        console.log('Envelopes data has changed:', envelopes);
-    }, [envelopes]);
+    // Filter transactions based on the selected envelope
+    const filteredTransactions = selectedEnvelope
+        ? transactions.filter((transaction) => transaction.envelope === selectedEnvelope.name)
+        : transactions;
 
     return (
         <div className="min-h-screen flex justify-center" style={{ backgroundColor: 'rgb(239,250,255)' }}>
             <div className="container mx-auto p-4 sm:p-6 md:p-8 lg:p-10 xl:p-12">
                 {/* Welcome message and totals */}
-                <div className="mb-4 text-center">
+                <div className="mb-8 text-center">
                     <h1 className="text-xl font-bold" style={{ color: '#3ea364' }}>
                         Welcome to SpendWise!
                     </h1>
@@ -77,7 +90,10 @@ const HomePage = () => {
                 {/* Left middle section for envelope and account buttons */}
                 <div className="flex">
                     {/* Section for Envelopes/Accounts buttons */}
-                    <div className="w-1/3 bg-white p-4 rounded shadow-lg" style={{ width: '35%', marginRight: '20px' }}>
+                    <div
+                        className="w-1/3 bg-white p-4 rounded shadow-lg"
+                        style={{ width: '35%', marginRight: '20px', maxHeight: '400px', overflowY: 'auto' }}
+                    >
                         <div className="flex justify-between mb-4">
                             <button
                                 className={`btn ${activeList === 'envelopes' ? 'bg-blue-600 text-white' : 'bg-gray-300 text-black'} px-4 py-2 rounded`}
@@ -95,9 +111,14 @@ const HomePage = () => {
 
                         {/* Render envelopes list based on activeList state */}
                         {activeList === 'envelopes' ? (
-                            <div>
+                            <div style={{ maxHeight: '400px', overflowY: 'auto' }}> {/* Add vertical scrolling */}
                                 {envelopes.map((envelope) => (
-                                    <div key={envelope.id} className="mb-4">
+                                    <div
+                                        key={envelope.id}
+                                        className={`mb-4 ${selectedEnvelope?.id === envelope.id ? 'bg-gray-200' : ''}`} // Highlight the selected envelope
+                                        onClick={() => handleSelectEnvelope(envelope)}
+                                        style={{ cursor: 'pointer' }}
+                                    >
                                         {/* Envelope name and available/budget */}
                                         <div className="flex justify-between">
                                             <div className="font-semibold">{envelope.name}</div>
@@ -147,7 +168,7 @@ const HomePage = () => {
                         <h2 className="text-md font-bold mb-2">Transaction History</h2>
 
                         {/* Check if there are transactions */}
-                        {transactions.length > 0 ? (
+                        {filteredTransactions.length > 0 ? (
                             <table className="w-full table-fixed">
                                 <thead className="bg-gray-100">
                                     <tr>
@@ -160,7 +181,7 @@ const HomePage = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {transactions.map((transaction) => (
+                                    {filteredTransactions.map((transaction) => (
                                         <tr key={transaction.id}>
                                             <td className="p-2 border">{transaction.date}</td>
                                             <td
@@ -205,6 +226,9 @@ const HomePage = () => {
                             <p>No transactions available.</p>
                         )}
                     </div>
+
+                    {/* Add the ToastContainer for notifications */}
+                    <ToastContainer position="top-right" autoClose={3000} />
                 </div>
             </div>
         </div>
