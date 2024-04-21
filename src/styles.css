@@ -1,3 +1,30 @@
+/* Import Tailwind Base, Components, and Utilities */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Define custom styles and classes */
+
+/* Dark mode styles */
+body.dark {
+    --bg-color: #1a1a1a; /* Dark background color for the body */
+    --text-color: black; /* Black text color */
+    --input-bg-color: #333; /* Dark background color for input fields */
+    --input-text-color: white; /* White text color for input fields */
+}
+
+/* Apply dark mode styles to the middle section of the page */
+.main-content.dark {
+    background-color: var(--bg-color); /* Use dark background color */
+    color: var(--text-color); /* Use black text color */
+}
+
+/* Apply dark mode styles to input fields */
+.main-content.dark input,
+.main-content.dark select,
+.main-content.dark textarea {
+    background-color: var(--input-bg-color);
+    color: var(--input-text-color);
+}
+
+/* Other styles as needed */

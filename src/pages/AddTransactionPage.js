@@ -4,10 +4,11 @@ import { addTransaction } from '../redux/reducers/transactionReducer';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import TransactionForm from '../components/TransactionForm';
+import { useTheme } from '../context/ThemeContext';
 
 const AddTransactionPage = () => {
     const dispatch = useDispatch();
-    // Fetch envelopes and accounts from Redux store
+    const { isDarkMode } = useTheme(); // Use the useTheme hook to get the dark mode status
     const envelopes = useSelector((state) => state.envelopes.envelopes || []);
     const accounts = useSelector((state) => state.accounts || []);
 
@@ -24,17 +25,9 @@ const AddTransactionPage = () => {
     // Function to handle form submission
     const handleSubmit = (event) => {
         event.preventDefault();
-
-        // Dispatch the addTransaction action to save the transaction
         dispatch(addTransaction({ ...formData, type: transactionType }));
-
-        // Log the saved transaction data for debugging purposes
         console.log('Transaction data saved:', { ...formData, type: transactionType });
-
-        // Show a success notification using react-toastify
         toast.success('Transaction saved successfully!');
-
-        // Reset the form data after saving the transaction
         setFormData({
             date: '',
             amount: '',
@@ -56,7 +49,6 @@ const AddTransactionPage = () => {
     // Function to handle transaction type change (expense or income)
     const handleTransactionTypeChange = (type) => {
         setTransactionType(type);
-        // Reset the form data when switching transaction types
         setFormData({
             date: '',
             amount: '',
@@ -67,10 +59,9 @@ const AddTransactionPage = () => {
     };
 
     return (
-        <div className="add-transaction-page flex flex-col items-center justify-center min-h-screen bg-gray-100">
+        <div className={`add-transaction-page ${isDarkMode ? 'dark' : ''} flex flex-col items-center justify-center min-h-screen`}>
             <div className="form-wrapper bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
                 <h1 className="text-2xl font-bold mb-4 text-center">Add Transaction</h1>
-
                 {/* Buttons to toggle between Expense and Income */}
                 <div className="mb-4 text-center">
                     <button
@@ -86,7 +77,6 @@ const AddTransactionPage = () => {
                         Income
                     </button>
                 </div>
-
                 {/* Form based on the selected transaction type */}
                 <form onSubmit={handleSubmit}>
                     {/* Date input field */}
@@ -101,7 +91,6 @@ const AddTransactionPage = () => {
                             required
                         />
                     </div>
-
                     {/* Amount input field */}
                     <div className="mb-4">
                         <label>Amount:</label>
@@ -114,7 +103,6 @@ const AddTransactionPage = () => {
                             required
                         />
                     </div>
-
                     {/* Conditionally render the envelope dropdown for Expense transactions */}
                     {transactionType === 'expense' && (
                         <div className="mb-4">
@@ -135,7 +123,6 @@ const AddTransactionPage = () => {
                             </select>
                         </div>
                     )}
-
                     {/* Account input field */}
                     <div className="mb-4">
                         <label>Account:</label>
@@ -148,7 +135,6 @@ const AddTransactionPage = () => {
                             required
                         />
                     </div>
-
                     {/* Description input field */}
                     <div className="mb-4">
                         <label>Description:</label>
@@ -160,7 +146,6 @@ const AddTransactionPage = () => {
                             className="border p-2 w-full rounded"
                         />
                     </div>
-
                     {/* Save button */}
                     <div className="flex justify-center">
                         <button className="btn bg-blue-600 text-white px-4 py-2 rounded" type="submit">
@@ -168,7 +153,6 @@ const AddTransactionPage = () => {
                         </button>
                     </div>
                 </form>
-
                 {/* Add the ToastContainer for notifications */}
                 <ToastContainer position="top-right" autoClose={3000} />
             </div>

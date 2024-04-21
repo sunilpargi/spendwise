@@ -8,25 +8,33 @@ import FillEnvelopePage from './pages/FillEnvelopePage';
 import ReportsPage from './pages/ReportsPage';
 import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUpPage';
+import EnvelopeManagementPage from './pages/EnvelopeManagementPage';
+import AccountManagementPage from './pages/AccountManagementPage';
+import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 
 const App = () => {
     return (
         <AuthProvider>
-            <Router>
-                <Header />
-                <div className="main-content min-h-screen">
-                    <Routes>
-                        <Route path="/" element={<HomePage />} />
-                        <Route path="/add-transaction" element={<AddTransactionPage />} />
-                        <Route path="/fill-envelope" element={<FillEnvelopePage />} />
-                        <Route path="/reports" element={<ReportsPage />} />
-                        <Route path="/login" element={<LoginPage />} />
-                        <Route path="/signup" element={<SignUpPage />} />
-                    </Routes>
-                </div>
-                <Footer />
-            </Router>
+            <ThemeProvider>
+                <Router>
+                    <Header />
+                    <div className="main-content min-h-screen">
+                        <Routes>
+                            <Route path="/" element={<HomePage />} />
+                            <Route path="/add-transaction" element={<AddTransactionPage />} />
+                            <Route path="/fill-envelope" element={<FillEnvelopePage />} />
+                            <Route path="/reports" element={<ReportsPage />} />
+                            <Route path="/login" element={<LoginPage />} />
+                            <Route path="/signup" element={<SignUpPage />} />
+                            <Route path="/envelope-management" element={<EnvelopeManagementPage />} />
+                            <Route path="/account-management" element={<AccountManagementPage />} />
+                        </Routes>
+                    </div>
+                    <Footer />
+                </Router>
+            </ThemeProvider>
         </AuthProvider>
     );
 };

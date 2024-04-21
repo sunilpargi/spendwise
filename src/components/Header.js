@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { FaEnvelopeOpenText, FaUserCircle, FaSignOutAlt } from 'react-icons/fa';
+import { FaUserCircle, FaSignOutAlt } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 
 const Header = () => {
@@ -59,10 +59,10 @@ const Header = () => {
                 {/* User Profile and Logout */}
                 {currentUser && (
                     <div className="flex items-center space-x-2">
-                        <div className="flex items-center space-x-1">
+                        <Link to="/profile">
                             <FaUserCircle className="text-2xl sm:text-3xl" />
-                            <span className="hidden sm:inline ml-1">Hi, {currentUser ? currentUser.email : ''}</span>
-                        </div>
+                        </Link>
+                        <span className="hidden sm:inline ml-1">Hi, {currentUser ? currentUser.email : ''}</span>
                         <button
                             onClick={handleLogout}
                             className="flex items-center space-x-1 text-sm sm:text-base"

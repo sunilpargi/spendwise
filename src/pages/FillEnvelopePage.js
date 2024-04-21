@@ -1,8 +1,14 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useTheme } from '../context/ThemeContext';
+import { editEnvelope, updateEnvelopes } from '../redux/reducers/envelopeReducer';
 
 const FillEnvelopePage = () => {
+    const { isDarkMode } = useTheme();
+    const dispatch = useDispatch();
+
     // Initial state for envelopes
     const [envelopes, setEnvelopes] = useState([
         { id: 1, name: 'Groceries', budget: 500, available: 0 },
@@ -36,41 +42,38 @@ const FillEnvelopePage = () => {
         });
 
         setEnvelopes(updatedEnvelopes);
+        console.log(`Updated envelopes in FillEnvelopePage:`, updatedEnvelopes);
+
+        // Dispatch the updated envelope data to the Redux state
+        const updatedEnvelope = updatedEnvelopes.find((envelope) => envelope.id === envelopeId);
+        dispatch(editEnvelope({ id: envelopeId, updatedData: updatedEnvelope }));
 
         // Recalculate the total amount filled as the sum of all available balances
         const newTotalAmountFilled = updatedEnvelopes.reduce((sum, envelope) => sum + envelope.available, 0);
         setTotalAmountFilled(newTotalAmountFilled);
 
-        // Log the change for debugging purposes
         console.log(`Envelope ${envelopeId} updated with new amount: ${amount}`);
     };
 
     // Function to handle save button click event
     const handleSave = () => {
-        // Add code here to save the envelopes data (e.g., make an API call or update state)
+        // Dispatch the updated envelopes data to the Redux state
+        dispatch(updateEnvelopes(envelopes));
+
         console.log('Saving envelopes data:', envelopes);
-
-        // Show a success notification using react-toastify
         toast.success('Envelopes data saved successfully!');
-
-        // Add any additional logic after saving data
     };
 
     return (
-        <div className="fill-envelope-page flex flex-col items-center justify-center min-h-screen bg-gray-100">
+        <div className={`fill-envelope-page ${isDarkMode ? 'dark' : ''} flex flex-col items-center justify-center min-h-screen`}>
             <div className="form-wrapper bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
                 <h1 className="text-2xl font-bold mb-4 text-center">Fill Envelope</h1>
-
-                {/* Display each envelope */}
                 {envelopes.map((envelope) => (
                     <div key={envelope.id} className="mb-4">
                         <div className="flex justify-between mb-2">
                             <div className="font-semibold">{envelope.name}</div>
-                            {/* Display available/budget */}
                             <div>{`${envelope.available.toFixed(2)}/${envelope.budget.toFixed(2)}`}</div>
                         </div>
-
-                        {/* Display the green bar for the envelope */}
                         <div className="relative h-2 bg-gray-300 mt-2">
                             <div
                                 className="absolute h-2 bg-green-500"
@@ -79,8 +82,6 @@ const FillEnvelopePage = () => {
                                 }}
                             />
                         </div>
-
-                        {/* Display input field for entering amount */}
                         <div className="mt-2 flex space-x-2">
                             <input
                                 type="number"
@@ -92,21 +93,15 @@ const FillEnvelopePage = () => {
                         </div>
                     </div>
                 ))}
-
-                {/* Display total amount filled */}
                 <div className="mt-4 text-center">
-                    <strong>Total Amount Filled :</strong> {totalAmountFilled.toFixed(2)}
+                    <strong>Total Amount Filled:</strong> {totalAmountFilled.toFixed(2)}
                 </div>
-
-                {/* Save button */}
                 <div className="flex justify-center mt-4">
                     <button className="btn bg-blue-600 text-white px-4 py-2 rounded" onClick={handleSave}>
                         Save
                     </button>
                 </div>
             </div>
-
-            {/* Add the ToastContainer for notifications */}
             <ToastContainer position="top-right" autoClose={3000} />
         </div>
     );
