@@ -5,7 +5,6 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContaine
 import calculateChartData from '../utils/calculateChartData';
 
 const DashboardPage = () => {
-  // Get transactions from Redux store (or any other state management)
   const transactions = useSelector((state) => state.transactions);
 
   // State to store chart data
@@ -21,7 +20,6 @@ const DashboardPage = () => {
     <div className="dashboard-page p-4">
       <h2 className="text-2xl font-bold mb-4">Dashboard</h2>
       
-      {/* Bar chart to visualize spending by category */}
       <div className="chart-container">
         <ResponsiveContainer width="100%" height={400}>
           <BarChart data={chartData}>

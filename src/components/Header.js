@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { FaUserCircle, FaSignOutAlt } from 'react-icons/fa';
+import { FaUserCircle, FaSignOutAlt, FaPlus, FaEnvelope } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 
 const Header = () => {
@@ -24,33 +24,50 @@ const Header = () => {
         return null;
     }
 
+    // Extract the username from the email address
+    const username = currentUser ? currentUser.email.split('@')[0] : '';
+
+    // Handle the SpendWise title click
+    const handleTitleClick = () => {
+        navigate('/'); // Redirect to root route
+    };
+
     return (
         <header className="bg-white text-black p-4">
             <div className="container mx-auto flex flex-col sm:flex-row justify-between items-center">
                 {/* Logo and Navigation Buttons */}
-                <div className="flex items-center space-x-4 mb-2 sm:mb-0">
-                    <div className="text-xl sm:text-2xl font-bold">SpendWise</div>
+                <div className="flex items-center justify-center w-full sm:w-auto space-x-8 mb-2 sm:mb-0">
+                    <div
+                        className="text-xl sm:text-2xl font-bold text-green-600 cursor-pointer"  // Updated color of SpendWise title
+                        onClick={handleTitleClick}
+                    >
+                        SpendWise
+                    </div>
                     <Link
                         to="/add-transaction"
-                        className="btn bg-blue-600 text-white px-3 py-1 rounded text-sm sm:text-base"
+                        className="text-lg font-bold flex items-center space-x-2" // Bold and increase font size of the button
+                        style={{ color: 'rgb(151,159,241)' }} // Custom color for button
                     >
-                        Add Transaction
+                        <FaPlus />
+                        <span>Add Transaction</span>
                     </Link>
                     <Link
                         to="/fill-envelope"
-                        className="btn bg-blue-600 text-white px-3 py-1 rounded text-sm sm:text-base"
+                        className="text-lg font-bold flex items-center space-x-2" // Bold and increase font size of the button
+                        style={{ color: 'rgb(151,159,241)' }}
                     >
-                        Fill Envelope
+                        <FaEnvelope />
+                        <span>Fill Envelope</span>
                     </Link>
                     <Link
                         to="/"
-                        className="btn bg-blue-600 text-white px-3 py-1 rounded text-sm sm:text-base"
+                        className="text-lg sm:text-base font-bold text-black"
                     >
                         Home
                     </Link>
                     <Link
                         to="/reports"
-                        className="btn bg-blue-600 text-white px-3 py-1 rounded text-sm sm:text-base"
+                        className="text-lg sm:text-base font-bold text-black"
                     >
                         Reports
                     </Link>
@@ -58,15 +75,10 @@ const Header = () => {
 
                 {/* User Profile and Logout */}
                 {currentUser && (
-                    <div className="flex items-center space-x-2">
-                        <Link to="/profile">
-                            <FaUserCircle className="text-2xl sm:text-3xl" />
-                        </Link>
-                        <span className="hidden sm:inline ml-1">Hi, {currentUser ? currentUser.email : ''}</span>
-                        <button
-                            onClick={handleLogout}
-                            className="flex items-center space-x-1 text-sm sm:text-base"
-                        >
+                    <div className="flex items-center space-x-7"> {/* Adjusted space-x-7 for more space */}
+                        <FaUserCircle className="text-2xl sm:text-3xl" />
+                        <span className="hidden sm:inline ml-1">Hi, {username}</span>
+                        <button onClick={handleLogout} className="flex items-center space-x-1 text-sm sm:text-base">
                             <FaSignOutAlt />
                             <span>Logout</span>
                         </button>

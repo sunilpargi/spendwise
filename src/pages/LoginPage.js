@@ -21,39 +21,41 @@ const LoginPage = () => {
     };
 
     return (
-        <div className="login-page p-4">
-            <h2 className="text-2xl font-bold mb-4">Login</h2>
-            <form onSubmit={handleSubmit}>
-                {error && <p className="text-red-600">{error}</p>}
-                <div className="mb-4">
-                    <label htmlFor="email">Email:</label>
-                    <input
-                        type="email"
-                        id="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                        className="border p-2 rounded w-full"
-                    />
-                </div>
-                <div className="mb-4">
-                    <label htmlFor="password">Password:</label>
-                    <input
-                        type="password"
-                        id="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                        className="border p-2 rounded w-full"
-                    />
-                </div>
-                <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
-                    Login
-                </button>
-            </form>
-            <p className="mt-4">
-                Don't have an account? <a href="/signup" className="text-blue-600">Sign Up</a>
-            </p>
+        <div className="min-h-screen flex justify-center items-center" style={{ backgroundColor: 'rgb(239,250,255)' }}>
+            <div className="login-page p-4 bg-white rounded-lg shadow-lg" style={{ maxWidth: '500px', width: '100%' }}>
+                <h2 className="text-2xl font-bold mb-4 text-center">Login</h2>
+                <form onSubmit={handleSubmit}>
+                    {error && <p className="text-red-600 text-center">{error}</p>}
+                    <div className="mb-4">
+                        <label htmlFor="email">Email:</label>
+                        <input
+                            type="email"
+                            id="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                            className="border p-2 rounded w-full"
+                        />
+                    </div>
+                    <div className="mb-4">
+                        <label htmlFor="password">Password:</label>
+                        <input
+                            type="password"
+                            id="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                            className="border p-2 rounded w-full"
+                        />
+                    </div>
+                    <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded w-full">
+                        Login
+                    </button>
+                </form>
+                <p className="mt-4 text-center">
+                    Don't have an account? <a href="/signup" className="text-blue-600">Sign Up</a>
+                </p>
+            </div>
         </div>
     );
 };

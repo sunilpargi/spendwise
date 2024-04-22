@@ -11,40 +11,31 @@ const EnvelopeManagementPage = () => {
     const navigate = useNavigate();
     const envelopes = useSelector((state) => state.envelopes.envelopes || []);
 
-    // State to manage new and edited envelopes
     const [envelopesData, setEnvelopesData] = useState(envelopes);
 
-    // Update envelopes data when the state changes
     useEffect(() => {
         setEnvelopesData(envelopes);
     }, [envelopes]);
 
-    // Handle changes in input fields for envelopes
     const handleInputChange = (index, field, value) => {
-        // Make a copy of envelopesData to ensure immutability
         const updatedEnvelopes = [...envelopesData];
-        // Modify the specific field of the target envelope entry
         updatedEnvelopes[index] = {
-            ...updatedEnvelopes[index], // Copy the existing envelope object
-            [field]: value // Update the specified field
+            ...updatedEnvelopes[index], 
+            [field]: value 
         };
-        // Update state with the modified envelopesData
         setEnvelopesData(updatedEnvelopes);
     };
 
-    // Handle adding a new empty envelope entry
     const handleAddEnvelope = () => {
         setEnvelopesData([...envelopesData, { id: Date.now(), name: '', budget: 0 }]);
     };
 
-    // Handle deleting an envelope
     const handleDeleteEnvelope = (index) => {
         const updatedEnvelopes = envelopesData.filter((_, i) => i !== index);
         setEnvelopesData(updatedEnvelopes);
     };
 
     const handleSaveChanges = () => {
-        // Filter out empty envelopes (with empty name or zero budget)
         const validEnvelopes = envelopesData.filter(
             (envelope) => envelope.name.trim() !== '' && envelope.budget > 0
         );
