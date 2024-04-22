@@ -1,4 +1,3 @@
-// src/components/Accounts.js
 import React from 'react';
 
 const Accounts = ({ accounts, onAddAccount, onEditAccount }) => {

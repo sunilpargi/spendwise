@@ -8,14 +8,12 @@ import transactionReducer from './reducers/transactionReducer';
 const persistConfig = {
     key: 'root',
     storage,
-    whitelist: ['envelopes', 'transactions'], // Specify which reducers you want to persist
+    whitelist: ['envelopes', 'transactions'], 
 };
 
-// Wrap the reducers with persistReducer
 const persistedEnvelopeReducer = persistReducer(persistConfig, envelopeReducer);
 const persistedTransactionReducer = persistReducer(persistConfig, transactionReducer);
 
-// Configure the store
 const store = configureStore({
     reducer: {
         envelopes: persistedEnvelopeReducer,

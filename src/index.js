@@ -8,10 +8,8 @@ import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { store, persistor } from './redux/store';
 
-// Create the root element
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
-// Render your app inside the root element using Provider for Redux
 root.render(
     <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
@@ -20,5 +18,4 @@ root.render(
     </Provider>
 );
 
-// Optionally, you can remove the call to `reportWebVitals` if you don't need it.
 reportWebVitals();

@@ -1,4 +1,3 @@
-// src/components/LazyLoadedComponent.js
 import React, { Suspense } from 'react';
 const LazyLoadedComponent = React.lazy(() => import('./ComponentPath'));
 

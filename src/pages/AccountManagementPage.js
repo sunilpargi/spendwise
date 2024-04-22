@@ -13,14 +13,12 @@ const AccountManagementPage = () => {
     
     const [accountsData, setAccountsData] = useState(accounts);
 
-    // Effect to update accountsData when accounts state changes
     useEffect(() => {
         if (accounts) {
             setAccountsData(accounts);
         }
     }, [accounts]);
 
-    // Function to handle input changes for accounts
     const handleInputChange = (index, field, value) => {
         const updatedAccounts = [...accountsData];
         updatedAccounts[index] = {
@@ -30,22 +28,17 @@ const AccountManagementPage = () => {
         setAccountsData(updatedAccounts);
     };
 
-    // Function to handle deleting an account
     const handleDeleteAccount = (index) => {
         const accountToDelete = accountsData[index];
-        // Dispatch deleteAccount action
         dispatch(deleteAccount(accountToDelete.id));
-        // Update local state
         const updatedAccounts = accountsData.filter((_, i) => i !== index);
         setAccountsData(updatedAccounts);
     };
 
-    // Function to save changes
     const handleSaveChanges = () => {
         accountsData.forEach((account) => {
             dispatch(editAccount({ id: account.id, updatedData: account }));
         });
-        // Additional logic (e.g., navigation) can go here
     };
 
     return (
@@ -61,7 +54,6 @@ const AccountManagementPage = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {/* Iterate over accountsData */}
                         {accountsData.map((account, index) => (
                             <tr key={account.id}>
                                 <td className="border p-2">
@@ -81,7 +73,6 @@ const AccountManagementPage = () => {
                                     />
                                 </td>
                                 <td className="border p-2">
-                                    {/* Delete button */}
                                     <button
                                         className="btn bg-red-600 text-white px-2 py-2 rounded"
                                         onClick={() => handleDeleteAccount(index)}
@@ -94,7 +85,6 @@ const AccountManagementPage = () => {
                     </tbody>
                 </table>
 
-                {/* Save and Cancel buttons */}
                 <div className="flex justify-center space-x-4">
                     <button
                         className="btn bg-blue-600 text-white px-4 py-2 rounded"
@@ -105,7 +95,6 @@ const AccountManagementPage = () => {
                     <button
                         className="btn bg-gray-300 text-black px-4 py-2 rounded"
                         onClick={() => {
-                            // Define a function to handle cancellation
                             setAccountsData(accounts);
                             navigate('/');
                         }}
@@ -115,7 +104,6 @@ const AccountManagementPage = () => {
                 </div>
             </div>
 
-            {/* Toast notification container */}
             <ToastContainer position="top-right" />
         </div>
     );

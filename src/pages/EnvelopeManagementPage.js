@@ -40,33 +40,26 @@ const EnvelopeManagementPage = () => {
             (envelope) => envelope.name.trim() !== '' && envelope.budget > 0
         );
     
-        // Iterate through valid envelopes and update Redux state
         validEnvelopes.forEach((envelope) => {
             const existingEnvelope = envelopes.find((e) => e.id === envelope.id);
             if (existingEnvelope) {
-                // Edit existing envelope
                 dispatch(editEnvelope({ id: envelope.id, updatedData: envelope }));
             } else {
-                // Add new envelope
                 dispatch(addEnvelope(envelope));
             }
         });
     
-        // Determine which envelopes need to be deleted
         const deletedEnvelopes = envelopes.filter(
             (envelope) => !validEnvelopes.some((e) => e.id === envelope.id)
         );
     
-        // Delete envelopes in Redux state
         deletedEnvelopes.forEach((envelope) => {
             dispatch(deleteEnvelope(envelope.id));
         });
     
-        // Redirect to homepage after saving
         navigate('/');
     };
 
-    // Handle canceling changes
     const handleCancelChanges = () => {
         setEnvelopesData(envelopes);
         navigate('/');
@@ -78,7 +71,6 @@ const EnvelopeManagementPage = () => {
                 <h2 className="text-2xl font-bold mb-4">Add / Edit Envelopes</h2>
                 <p className="text-sm mb-4">Design a budget you can really live with.</p>
 
-                {/* Table for envelopes */}
                 <table className="w-full mb-4">
                     <thead>
                         <tr>
@@ -88,7 +80,6 @@ const EnvelopeManagementPage = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {/* List of envelopes */}
                         {envelopesData.map((envelope, index) => (
                             <tr key={envelope.id}>
                                 <td className="border p-2">
@@ -108,18 +99,16 @@ const EnvelopeManagementPage = () => {
                                     />
                                 </td>
                                 <td className="border p-2">
-                                    {/* Delete button */}
                                     <button
                                         className="btn bg-red-600 text-white px-2 py-2 rounded"
                                         onClick={() => handleDeleteEnvelope(index)}
                                     >
-                                        <FaTrashAlt /> {/* Trash icon for delete action */}
+                                        <FaTrashAlt /> 
                                     </button>
                                 </td>
                             </tr>
                         ))}
 
-                        {/* Add button */}
                         <tr>
                             <td colSpan={3} className="border p-2 text-left">
                                 <button
@@ -133,7 +122,6 @@ const EnvelopeManagementPage = () => {
                     </tbody>
                 </table>
 
-                {/* Save and Cancel buttons */}
                 <div className="flex justify-center space-x-4">
                     <button
                         className="btn bg-blue-600 text-white px-4 py-2 rounded"

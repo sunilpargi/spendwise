@@ -3,15 +3,12 @@ import { auth } from '../firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
 import { toast } from 'react-toastify';
 
-// Create a context for authentication
 const AuthContext = createContext();
 
-// Export the useAuth hook
 export const useAuth = () => {
     return useContext(AuthContext);
 };
 
-// Define the AuthProvider component
 export const AuthProvider = ({ children }) => {
     const [currentUser, setCurrentUser] = useState(null);
     const [loading, setLoading] = useState(true);

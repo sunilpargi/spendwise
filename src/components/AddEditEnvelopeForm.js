@@ -17,10 +17,8 @@ const AddEditEnvelopeForm = () => {
     const handleSubmit = (event) => {
         event.preventDefault();
         if (id) {
-            // Edit existing envelope
             dispatch(editEnvelope({ id, name, available, budget }));
         } else {
-            // Add new envelope
             dispatch(addEnvelope({ name, available, budget }));
         }
         navigate('/envelope-management');

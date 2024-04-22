@@ -17,10 +17,8 @@ import {
 } from 'recharts';
 
 const ReportsPage = () => {
-    // Fetch transactions from Redux store
     const transactions = useSelector((state) => state.transactions.transactions || []);
 
-    // Calculate total income and total expense
     const totalIncome = transactions.reduce((acc, transaction) => {
         return transaction.type === 'income' ? acc + parseFloat(transaction.amount) : acc;
     }, 0);
@@ -29,7 +27,6 @@ const ReportsPage = () => {
         return transaction.type === 'expense' ? acc + parseFloat(transaction.amount) : acc;
     }, 0);
 
-    // Calculate data for charts
     const incomeData = transactions.filter(transaction => transaction.type === 'income').map(transaction => ({
         date: transaction.date,
         amount: parseFloat(transaction.amount),
@@ -46,7 +43,6 @@ const ReportsPage = () => {
         expense: expenseData[index]?.amount || 0,
     }));
 
-    // Calculate pie chart data for expense categories
     const expenseCategories = transactions.filter(transaction => transaction.type === 'expense')
         .reduce((acc, transaction) => {
             const category = transaction.envelope || 'Uncategorized';
@@ -63,14 +59,12 @@ const ReportsPage = () => {
         value: amount,
     }));
 
-    // Colors for pie chart
     const colors = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#d0ed57', '#a4de6c'];
 
     return (
         <div className="p-4" style={{ backgroundColor: 'rgb(239,250,255)' }}>
             <h2 className="text-2xl font-bold mb-4">Reports</h2>
 
-            {/* Bar Chart: Total Income vs Total Expense */}
             <div className="mb-6">
                 <h3 className="text-lg font-semibold mb-2">Total Income vs Total Expense</h3>
                 <ResponsiveContainer width="100%" height={300}>
@@ -84,7 +78,6 @@ const ReportsPage = () => {
                 </ResponsiveContainer>
             </div>
 
-            {/* Line Chart: Income and Expense Trends */}
             <div className="mb-6">
                 <h3 className="text-lg font-semibold mb-2">Income and Expense Trends</h3>
                 <ResponsiveContainer width="100%" height={300}>
@@ -99,7 +92,6 @@ const ReportsPage = () => {
                 </ResponsiveContainer>
             </div>
 
-            {/* Pie Chart: Expense Categories Breakdown */}
             <div className="mb-6">
                 <h3 className="text-lg font-semibold mb-2">Expense Categories Breakdown</h3>
                 <ResponsiveContainer width="100%" height={300}>

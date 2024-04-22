@@ -6,30 +6,25 @@ import { useAuth } from '../context/AuthContext';
 const Header = () => {
     const { currentUser, logout } = useAuth();
     const navigate = useNavigate();
-    const location = useLocation(); // Get the current location
+    const location = useLocation(); 
 
     const handleLogout = async () => {
         await logout();
-        navigate('/login'); // Redirect to login page after logging out
+        navigate('/login'); 
     };
 
-    // Define the routes where the header should not be shown
     const routesWithoutHeader = ['/login', '/signup'];
 
-    // Determine if the current route is in the list of routes without a header
     const isHiddenRoute = routesWithoutHeader.includes(location.pathname);
 
-    // Only render the header if the current route is not in the list of routes without a header
     if (isHiddenRoute) {
         return null;
     }
 
-    // Extract the username from the email address
     const username = currentUser ? currentUser.email.split('@')[0] : '';
 
-    // Handle the SpendWise title click
     const handleTitleClick = () => {
-        navigate('/'); // Redirect to root route
+        navigate('/'); 
     };
 
     return (
@@ -45,15 +40,15 @@ const Header = () => {
                     </div>
                     <Link
                         to="/add-transaction"
-                        className="text-lg font-bold flex items-center space-x-2" // Bold and increase font size of the button
-                        style={{ color: 'rgb(151,159,241)' }} // Custom color for button
+                        className="text-lg font-bold flex items-center space-x-2" 
+                        style={{ color: 'rgb(151,159,241)' }}
                     >
                         <FaPlus />
                         <span>Add Transaction</span>
                     </Link>
                     <Link
                         to="/fill-envelope"
-                        className="text-lg font-bold flex items-center space-x-2" // Bold and increase font size of the button
+                        className="text-lg font-bold flex items-center space-x-2" 
                         style={{ color: 'rgb(151,159,241)' }}
                     >
                         <FaEnvelope />
@@ -75,7 +70,7 @@ const Header = () => {
 
                 {/* User Profile and Logout */}
                 {currentUser && (
-                    <div className="flex items-center space-x-7"> {/* Adjusted space-x-7 for more space */}
+                    <div className="flex items-center space-x-7"> 
                         <FaUserCircle className="text-2xl sm:text-3xl" />
                         <span className="hidden sm:inline ml-1">Hi, {username}</span>
                         <button onClick={handleLogout} className="flex items-center space-x-1 text-sm sm:text-base">

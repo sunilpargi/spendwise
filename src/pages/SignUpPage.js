@@ -13,9 +13,8 @@ const SignUpPage = () => {
         event.preventDefault();
         try {
             await signup(email, password);
-            navigate('/'); // Navigate to home page after successful signup
+            navigate('/');
         } catch (error) {
-            // Set the error message to display on the page
             setErrorMessage(error.message);
         }
     };

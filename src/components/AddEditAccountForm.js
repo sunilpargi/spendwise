@@ -16,10 +16,8 @@ const AddEditAccountForm = () => {
     const handleSubmit = (event) => {
         event.preventDefault();
         if (id) {
-            // Edit existing account
             dispatch(editAccount({ id, name, balance }));
         } else {
-            // Add new account
             dispatch(addAccount({ name, balance }));
         }
         navigate('/account-management');

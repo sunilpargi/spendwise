@@ -14,16 +14,13 @@ const HomePage = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    // Retrieve state from Redux store
     const transactions = useSelector((state) => state.transactions.transactions || []);
     const envelopes = useSelector((state) => state.envelopes.envelopes || []);
     const newEnvelopeCreated = useSelector((state) => state.envelopes.newEnvelopeCreated);
 
-    // Local state for active list and selected envelope
     const [activeList, setActiveList] = useState('envelopes');
     const [selectedEnvelope, setSelectedEnvelope] = useState(null);
 
-    // Calculate total income, expense, and available balance
     const totalIncome = useMemo(() => {
         return transactions.reduce((acc, transaction) => {
             if (transaction.type === 'income') {
@@ -75,10 +72,8 @@ const HomePage = () => {
         value: amount,
     }));
 
-    // Define colors for the pie chart
     const colors = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#d0ed57', '#a4de6c'];
 
-    // Debug logs to check the data
     console.log("Expense Categories:", expenseCategories);
     console.log("Pie Chart Data:", pieChartData);
 
@@ -95,24 +90,20 @@ const HomePage = () => {
         if (transaction) {
             const envelope = envelopes.find((e) => e.name === transaction.envelope);
 
-            // Update envelope's available balance if the transaction is an expense
             if (envelope && transaction.type === 'expense') {
                 envelope.available += parseFloat(transaction.amount);
                 dispatch(editEnvelope({ id: envelope.id, updatedData: { available: envelope.available } }));
             }
 
-            // Delete the transaction
             dispatch(deleteTransaction(transactionId));
         }
     };
 
-    // Handle selecting an envelope and filtering transactions
     const handleSelectEnvelope = (envelope) => {
         setSelectedEnvelope(envelope);
         dispatch(filterTransactionsByEnvelope(envelope.name));
     };
 
-    // Handle navigation to Add/Edit Envelope page
     const handleAddEditEnvelope = () => {
         navigate('/envelope-management');
     };
@@ -128,7 +119,6 @@ const HomePage = () => {
     return (
         <div className="min-h-screen flex justify-center" style={{ backgroundColor: 'rgb(239,250,255)' }}>
             <div className="container mx-auto p-4 sm:p-6 md:p-8 lg:p-10 xl:p-12">
-                {/* Welcome message and totals */}
                 <div className="mb-8 text-center">
     <h1 className="text-2xl font-bold text-green-600 mb-2">Welcome to SpendWise!</h1>
     <p className="text-md text-gray-700 mb-4">Manage your finances effectively with SpendWise.</p>
@@ -196,7 +186,6 @@ const HomePage = () => {
                         )}
                     </div>
 
-                    {/* Transaction history section */}
                     <div className="mt-4 p-4 rounded-lg bg-white ml-4" style={{ width: '60%', maxHeight: '300px', overflowY: 'auto', overflowX: 'hidden' }}>
                         <h2 className="text-md font-bold mb-2">Transaction History</h2>
 
@@ -232,11 +221,9 @@ const HomePage = () => {
                     </div>
                 </div>
 
-                {/* Expense categories breakdown section */}
                 <div className="mt-8 p-4 rounded-lg bg-white">
                     <h2 className="text-md font-bold mb-2">Expense Categories Breakdown</h2>
 
-                    {/* Pie Chart: Expense Categories */}
                     <ResponsiveContainer width="100%" height={300}>
                         <PieChart>
                             <Pie data={pieChartData} dataKey="value" nameKey="name">
