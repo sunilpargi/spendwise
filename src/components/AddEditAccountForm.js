@@ -1,4 +1,3 @@
-// src/components/AddEditAccountForm.js
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -8,7 +7,7 @@ const AddEditAccountForm = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { id } = useParams();
-    const accounts = useSelector((state) => state.accounts.accounts || []);
+    const accounts = useSelector((state) => state.accounts?.accounts || []);
     const existingAccount = accounts.find((account) => account.id === id);
 
     const [name, setName] = useState(existingAccount ? existingAccount.name : '');

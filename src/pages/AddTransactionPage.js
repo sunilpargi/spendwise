@@ -85,7 +85,7 @@ const AddTransactionPage = () => {
     };
 
     return (
-        <div className={`add-transaction-page ${isDarkMode ? 'dark' : ''} flex flex-col items-center justify-center min-h-screen`}>
+        <div style={{ backgroundColor: 'rgb(239,250,255)' }} className={`add-transaction-page ${isDarkMode ? 'dark' : ''} flex flex-col items-center justify-center min-h-screen`}>
             <div className="form-wrapper bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
                 <h1 className="text-2xl font-bold mb-4 text-center">Add Transaction</h1>
 

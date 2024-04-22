@@ -4,6 +4,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
     transactions: [],
     filteredTransactions: [],
+    selectedEnvelope: null, // Add selectedEnvelope to track the selected envelope
 };
 
 const transactionSlice = createSlice({
@@ -13,7 +14,15 @@ const transactionSlice = createSlice({
         addTransaction: (state, action) => {
             const transaction = action.payload;
             state.transactions.push(transaction);
-            state.filteredTransactions = state.transactions;
+
+            // Update filtered transactions based on the selected envelope
+            if (state.selectedEnvelope) {
+                state.filteredTransactions = state.transactions.filter(
+                    (transaction) => transaction.envelope === state.selectedEnvelope
+                );
+            } else {
+                state.filteredTransactions = state.transactions;
+            }
         },
         editTransaction: (state, action) => {
             const { id, updatedData } = action.payload;
@@ -21,22 +30,39 @@ const transactionSlice = createSlice({
             if (index !== -1) {
                 state.transactions[index] = { ...state.transactions[index], ...updatedData };
             }
-            state.filteredTransactions = state.transactions;
+
+            // Update filtered transactions based on the selected envelope
+            if (state.selectedEnvelope) {
+                state.filteredTransactions = state.transactions.filter(
+                    (transaction) => transaction.envelope === state.selectedEnvelope
+                );
+            } else {
+                state.filteredTransactions = state.transactions;
+            }
         },
         deleteTransaction: (state, action) => {
             const transactionId = action.payload;
             state.transactions = state.transactions.filter((transaction) => transaction.id !== transactionId);
-            state.filteredTransactions = state.transactions;
+
+            // Update filtered transactions based on the selected envelope
+            if (state.selectedEnvelope) {
+                state.filteredTransactions = state.transactions.filter(
+                    (transaction) => transaction.envelope === state.selectedEnvelope
+                );
+            } else {
+                state.filteredTransactions = state.transactions;
+            }
         },
         filterTransactionsByEnvelope: (state, action) => {
-            const selectedEnvelope = action.payload;
+            state.selectedEnvelope = action.payload; // Update selectedEnvelope state
             state.filteredTransactions = state.transactions.filter(
-                (transaction) => transaction.envelope === selectedEnvelope
+                (transaction) => transaction.envelope === action.payload
             );
         },
     },
 });
 
+// Export the actions
 export const {
     addTransaction,
     editTransaction,
