@@ -7,7 +7,7 @@ SpendWise is a comprehensive financial management application developed during a
 - **Welcome Screen & Financial Snapshot**: Users are greeted with an overview of their financial status, including a breakdown of daily expenses, spending habits, and financial goals.
   
 - **Expense Categorization**: Users can categorize their expenses and easily access different expense categories, such as groceries, entertainment, bills, and more.
-- 
+  
 - **Envelope System**: Users can create multiple envelopes, set budgets for each, and manage funds by filling or taking out money from each envelope as needed.
 
 - **Expense History Navigation**: Users can navigate through their expense history and make changes to current day's expenditures.
