@@ -21,7 +21,7 @@ const Header = () => {
         return null;
     }
 
-    const username = currentUser ? currentUser.email.split('@')[0] : '';
+    //const username = currentUser ? currentUser.email.split('@')[0] : '';
 
     const handleTitleClick = () => {
         navigate('/'); 

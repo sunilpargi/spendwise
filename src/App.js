@@ -10,7 +10,7 @@ import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUpPage';
 import EnvelopeManagementPage from './pages/EnvelopeManagementPage';
 import AccountManagementPage from './pages/AccountManagementPage';
-import ProtectedRoute from './components/ProtectedRoute';
+//import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 
