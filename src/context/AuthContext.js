@@ -16,11 +16,12 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             setCurrentUser(user);
-            setLoading(false);
+            setLoading(false); // Ensure loading is set to false
         });
-
+    
         return unsubscribe;
     }, []);
+    
 
     const login = async (email, password) => {
         try {

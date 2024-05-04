@@ -14,7 +14,13 @@ import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 
+// Import the new useInitializeDefaultEnvelopes function
+import useInitializeDefaultEnvelopes from './utils/useInitializeDefaultEnvelopes';
+
 const App = () => {
+    // Call the useInitializeDefaultEnvelopes hook
+    useInitializeDefaultEnvelopes();
+
     return (
         <AuthProvider>
             <ThemeProvider>

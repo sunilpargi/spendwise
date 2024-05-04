@@ -70,15 +70,16 @@ const Header = () => {
 
                 {/* User Profile and Logout */}
                 {currentUser && (
-                    <div className="flex items-center space-x-7"> 
-                        <FaUserCircle className="text-2xl sm:text-3xl" />
-                        <span className="hidden sm:inline ml-1">Hi, {username}</span>
-                        <button onClick={handleLogout} className="flex items-center space-x-1 text-sm sm:text-base">
-                            <FaSignOutAlt />
-                            <span>Logout</span>
-                        </button>
-                    </div>
-                )}
+    <div className="flex items-center space-x-7">
+        <FaUserCircle className="text-2xl sm:text-3xl" />
+        <span className="hidden sm:inline ml-1">Hi, {currentUser.email}</span> {/* Show user email */}
+        <button onClick={handleLogout} className="flex items-center space-x-1 text-sm sm:text-base">
+            <FaSignOutAlt />
+            <span>Logout</span>
+        </button>
+    </div>
+)}
+
             </div>
         </header>
     );
