@@ -1,0 +1,8 @@
+{
+    "extends": ["react-app", "react-app/jest"], // Extending from react-app
+    "rules": {
+        "no-unused-vars": "off", // Ignore unused variables
+        "no-console": "off" // Ignore console statements
+        // Add other rules you want to customize
+    }
+}
