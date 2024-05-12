@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { resetNewEnvelopeCreatedFlag } from '../redux/reducers/envelopeReducer';
+
 const FillEnvelopeForm = ({ envelopes, onSubmit }) => {
     const [formData, setFormData] = useState({});
+    const dispatch = useDispatch(); // Add useDispatch hook
 
     const handleChange = (envelopeId, fillAmount) => {
         setFormData((prevData) => ({
@@ -9,10 +13,14 @@ const FillEnvelopeForm = ({ envelopes, onSubmit }) => {
         }));
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        onSubmit(formData);
+        console.log('Form submitted. Dispatching resetNewEnvelopeCreatedFlag action...');
+        await onSubmit(formData);
+        dispatch(resetNewEnvelopeCreatedFlag()); // Dispatch the action to reset newEnvelopeCreated flag
     };
+
+    console.log('Rendering FillEnvelopeForm...', { envelopes });
 
     return (
         <form onSubmit={handleSubmit} className="fill-envelope-form">

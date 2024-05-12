@@ -1,3 +1,4 @@
+// ConfigureStore.js
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 import storage from 'redux-persist/lib/storage';
 import { persistReducer, persistStore } from 'redux-persist';
@@ -8,8 +9,11 @@ import transactionReducer from './reducers/transactionReducer';
 const persistConfig = {
     key: 'root',
     storage,
-    whitelist: ['envelopes', 'transactions'], 
-};
+    whitelist: [
+        'envelopes',
+        'transactions',
+    ],
+    };
 
 const persistedEnvelopeReducer = persistReducer(persistConfig, envelopeReducer);
 const persistedTransactionReducer = persistReducer(persistConfig, transactionReducer);

@@ -14,10 +14,18 @@ const HomePage = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    // Fetch data from the Redux store
-    const transactions = useSelector((state) => state.transactions.transactions || []);
-    const envelopes = useSelector((state) => state.envelopes.envelopes || []);
-    const newEnvelopeCreated = useSelector((state) => state.envelopes.newEnvelopeCreated);
+    const transactions = useSelector((state) => {
+        console.log('Transactions from Redux state:', state.transactions.transactions);
+        return state.transactions.transactions || [];
+    });
+    const envelopes = useSelector((state) => {
+        console.log('Envelopes from Redux state:', state.envelopes.envelopes);
+        return state.envelopes.envelopes || [];
+    });
+    const newEnvelopeCreated = useSelector((state) => {
+        console.log('New envelope created flag from Redux state:', state.envelopes.newEnvelopeCreated);
+        return state.envelopes.newEnvelopeCreated;
+    });
 
     // Define colors for the Pie Chart
     const colors = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#d0ed57', '#a4de6c'];
@@ -97,7 +105,7 @@ const HomePage = () => {
 
             if (envelope && transaction.type === 'expense') {
                 envelope.available += parseFloat(transaction.amount);
-                dispatch(editEnvelope({ id: envelope.id, updatedData: { available: envelope.available } }));
+                dispatch(editEnvelope({ id: envelope.id, updatedData: envelope })); // Pass the envelope object directly
             }
 
             dispatch(deleteTransaction(transactionId));
@@ -115,11 +123,17 @@ const HomePage = () => {
 
     // Handle toast for new envelope created
     useEffect(() => {
+        console.log('New envelope created flag:', newEnvelopeCreated);
         if (newEnvelopeCreated) {
             toast.success('New envelope created!');
             dispatch(resetNewEnvelopeCreatedFlag());
         }
     }, [newEnvelopeCreated, dispatch]);
+
+    // Log current state for debugging
+    console.log('Transactions:', transactions);
+    console.log('Envelopes:', envelopes);
+    console.log('New envelope created:', newEnvelopeCreated);
 
     return (
         <div className="min-h-screen flex justify-center" style={{ backgroundColor: 'rgb(239,250,255)' }}>

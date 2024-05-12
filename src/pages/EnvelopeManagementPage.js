@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { addEnvelope, editEnvelope, deleteEnvelope } from '../redux/reducers/envelopeReducer';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FaPlus, FaTrashAlt } from 'react-icons/fa';
 
@@ -25,40 +25,40 @@ const EnvelopeManagementPage = () => {
         };
         setEnvelopesData(updatedEnvelopes);
     };
+    
 
     const handleAddEnvelope = () => {
-        setEnvelopesData([...envelopesData, { id: Date.now(), name: '', budget: 0 }]);
+        const newEnvelope = { id: Date.now(), name: '', budget: 0 };
+        console.log('Adding new envelope:', newEnvelope);
+        setEnvelopesData([...envelopesData, newEnvelope]);
     };
 
     const handleDeleteEnvelope = (index) => {
-        const updatedEnvelopes = envelopesData.filter((_, i) => i !== index);
-        setEnvelopesData(updatedEnvelopes);
+        const envelopeIdToDelete = envelopesData[index].id;
+        console.log('Deleting envelope with ID:', envelopeIdToDelete);
+        dispatch(deleteEnvelope(envelopeIdToDelete));
     };
 
-    const handleSaveChanges = () => {
-        const validEnvelopes = envelopesData.filter(
-            (envelope) => envelope.name.trim() !== '' && envelope.budget > 0
-        );
-    
-        validEnvelopes.forEach((envelope) => {
-            const existingEnvelope = envelopes.find((e) => e.id === envelope.id);
-            if (existingEnvelope) {
-                dispatch(editEnvelope({ id: envelope.id, updatedData: envelope }));
-            } else {
-                dispatch(addEnvelope(envelope));
-            }
-        });
-    
-        const deletedEnvelopes = envelopes.filter(
-            (envelope) => !validEnvelopes.some((e) => e.id === envelope.id)
-        );
-    
-        deletedEnvelopes.forEach((envelope) => {
-            dispatch(deleteEnvelope(envelope.id));
-        });
-    
-        navigate('/');
-    };
+   // Inside handleSaveChanges function
+const handleSaveChanges = () => {
+    // const validEnvelopes = envelopesData.filter(
+    //     (envelope) => envelope.name.trim() !== '' && envelope.budget > 0
+    // );
+
+    // validEnvelopes.forEach((envelope) => {
+    //     if (envelope.id) {
+    //         console.log('Editing envelope:', envelope);
+    //         // Adjust payload structure to include updatedData
+    //         dispatch(editEnvelope({ id: envelope.id, updatedData: envelope }));
+    //     } else {
+    //         console.log('Adding new envelope:', envelope);
+    //         dispatch(addEnvelope(envelope));
+    //     }
+    // });
+
+    navigate('/');
+};
+
 
     const handleCancelChanges = () => {
         setEnvelopesData(envelopes);

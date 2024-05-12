@@ -1,63 +1,110 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'; // Add this import
+import { editEnvelope, updateEnvelopes } from '../redux/reducers/envelopeReducer';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useTheme } from '../context/ThemeContext';
-import { editEnvelope, updateEnvelopes } from '../redux/reducers/envelopeReducer';
 
 const FillEnvelopePage = () => {
-    const { isDarkMode } = useTheme();
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const { isDarkMode } = useTheme();
 
-    const envelopesFromRedux = useSelector((state) => state.envelopes.envelopes || []);
+    // Redux envelopes and envelopes in local state
+    const envelopesFromRedux = useSelector((state) => state.envelopes.envelopes);
 
-    const [envelopes, setEnvelopes] = useState(envelopesFromRedux);
+    useEffect(() => {
+        console.log("Envelopes from Redux on mount:", envelopesFromRedux);
+    }, [envelopesFromRedux]);
 
-    const [totalAmountFilled, setTotalAmountFilled] = useState(0);
+    // Calculate total filled amount
+    const totalAmountFilled = envelopesFromRedux.reduce((acc, envelope) => acc + parseFloat(envelope.available || 0), 0);
 
-    const calculateTotalAmountFilled = () => {
-        const totalFilled = envelopes.reduce((sum, envelope) => sum + (parseFloat(envelope.available) || 0), 0);
-        setTotalAmountFilled(totalFilled);
-    };
+    // State variables for envelope amounts
+    const [envelopeAmounts, setEnvelopeAmounts] = useState({});
+    // Initialize envelope amounts with default values
+    useEffect(() => {
+        const initialEnvelopeAmounts = {};
+        envelopesFromRedux.forEach(envelope => {
+            initialEnvelopeAmounts[envelope.id] = envelope.available || 0;
+        });
+        setEnvelopeAmounts(initialEnvelopeAmounts);
+    }, [envelopesFromRedux]);
 
-    const handleAmountChange = (value, envelopeId) => {
-        const amount = parseFloat(value);
-
-        if (isNaN(amount) || amount < 0) {
+    const handleAmountChange = (event, envelopeId) => {
+        const newAvailable = parseFloat(event.target.value);
+        console.log(`Handling amount change: envelopeId = ${envelopeId}, new value = ${newAvailable}`);
+    
+        // Check if envelopeId is undefined
+        if (envelopeId === undefined) {
+            console.error('Error: envelopeId is undefined.');
+            console.log('Event:', event);
+            console.log('Event target value:', event.target.value);
             return;
         }
-
-        const updatedEnvelopes = envelopes.map((envelope) => {
+    
+        // Create a new array with updated envelope available amount
+        const updatedEnvelopes = envelopesFromRedux.map((envelope) => {
             if (envelope.id === envelopeId) {
-                return { ...envelope, available: amount };
+                console.log(`Updating envelope ${envelopeId} with new available amount: ${newAvailable}`);
+                return {
+                    ...envelope,
+                    available: newAvailable,
+                };
             }
             return envelope;
         });
-
-        setEnvelopes(updatedEnvelopes);
-        calculateTotalAmountFilled();
-
-        const updatedEnvelope = updatedEnvelopes.find((envelope) => envelope.id === envelopeId);
-        dispatch(editEnvelope({ id: envelopeId, updatedData: updatedEnvelope }));
-
-        console.log(`Envelope ${envelopeId} updated with new amount: ${amount}`);
+    
+        // Update state and Redux store
+        setEnvelopeAmounts(updatedEnvelopes);
+        console.log("Updated envelopes:", updatedEnvelopes);
+    
+        // Dispatch the updated envelopes to the Redux store
+        dispatch(updateEnvelopes(updatedEnvelopes));
     };
+    
+    
 
     const handleSave = () => {
-        dispatch(updateEnvelopes(envelopes));
-
-        console.log('Saving envelopes data:', envelopes);
-
-        const toastId = toast.success('Envelopes data saved successfully!');
-
-        toast.onChange((state) => {
-            if (state.id === toastId && state.status === 'hidden') {
-                navigate('/');
+        // Convert envelopeAmounts object to an array of envelopes
+        const updatedEnvelopes = Object.keys(envelopeAmounts).map(envelopeId => {
+            const parsedEnvelopeId = parseInt(envelopeId); // Parse the envelopeId as an integer
+            const envelope = envelopesFromRedux.find(envelope => envelope.id === parsedEnvelopeId);
+            console.log('Found envelope:', envelope); // Log the found envelope
+            if (envelope) {
+                return {
+                    id: parsedEnvelopeId,
+                    available: envelopeAmounts[envelopeId],
+                    name: envelope.name || '', // Retrieve the name from the existing envelope, or fallback to an empty string
+                    budget: envelope.budget || 0, // Retrieve the budget from the existing envelope, or fallback to 0
+                };
+            } else {
+                // If the envelope does not exist in the redux state, create a new one with empty name and budget
+                return {
+                    id: parsedEnvelopeId,
+                    available: envelopeAmounts[envelopeId],
+                    name: '',
+                    budget: 0,
+                };
             }
         });
+    
+        console.log('Updated envelopes:', updatedEnvelopes); // Log the updated envelopes
+    
+        // Dispatch the updated envelopes array to the Redux store
+        dispatch(updateEnvelopes(updatedEnvelopes));
+        console.log("Saving envelopes data:", updatedEnvelopes);
+    
+        // Notify the user and navigate back home
+        toast.success('Envelopes saved successfully!');
+        setTimeout(() => navigate('/'), 3000);
     };
+    
+    
+    
+    
+    
 
     return (
         <div
@@ -67,37 +114,38 @@ const FillEnvelopePage = () => {
             <div className="form-wrapper bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
                 <h1 className="text-2xl font-bold mb-4 text-center">Fill Envelope</h1>
                 <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
-                    {envelopes.map((envelope) => (
-                        <div key={envelope.id} className="mb-4">
-                            <div className="flex justify-between mb-2">
-                                <div className="font-semibold">{envelope.name}</div>
-                                <div>{`${parseFloat(envelope.available || 0).toFixed(2)} / ${parseFloat(envelope.budget || 0).toFixed(2)}`}</div>
-                            </div>
-                            <div className="relative h-2 bg-gray-300 mt-2">
-                                <div
-                                    className="absolute h-2 bg-green-500"
-                                    style={{
-                                        width: `${Math.min((parseFloat(envelope.available || 0) / parseFloat(envelope.budget || 0)) * 100, 100)}%`,
-                                    }}
-                                />
-                            </div>
-                            <div className="mt-2 flex space-x-2">
-                                <input
-                                    type="number"
-                                    min="0"
-                                    placeholder="0.00"
-                                    value={parseFloat(envelope.available) || ''}
-                                    onChange={(e) => handleAmountChange(e.target.value, envelope.id)}
-                                    className="border p-1 w-20 rounded-lg"
-                                />
-                            </div>
-                        </div>
-                    ))}
+                {envelopesFromRedux.map((envelope) => {
+    console.log('Envelope:', envelope); // Log the envelope object
+    return (
+        <div key={envelope.id} className="mb-4">
+            <div className="flex justify-between mb-2">
+                <div className="font-semibold">{envelope.name}</div>
+                <div>{`${envelope.available} / ${envelope.budget}`}</div>
+            </div>
+            <div className="relative h-2 bg-gray-300 mt-2">
+                <div
+                    className="absolute h-2 bg-green-500"
+                    style={{
+                        width: `${(envelope.available / envelope.budget) * 100}%`,
+                    }}
+                />
+            </div>
+            <div className="mt-2">
+                <input
+                    type="number"
+                    min="0"
+                    value={envelopeAmounts[envelope.id] || 0}
+                    onChange={(e) => handleAmountChange(e, envelope.id)}
+                    className="p-2 border rounded"
+                />
+            </div>
+        </div>
+    );
+})}
+
                 </div>
+
                 <div className="mt-4 text-center">
-                    <strong>Total Amount Filled:</strong> {totalAmountFilled.toFixed(2)}
-                </div>
-                <div className="flex justify-center mt-4">
                     <button className="btn bg-blue-600 text-white px-4 py-2 rounded" onClick={handleSave}>
                         Save
                     </button>
